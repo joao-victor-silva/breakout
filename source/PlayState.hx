@@ -9,6 +9,7 @@ import flixel.util.FlxDirectionFlags;
 import flixel.FlxG;
 import Std.int;
 import openfl.Assets;
+import flixel.text.FlxText;
 
 class PlayState extends FlxState
 {
@@ -23,6 +24,9 @@ class PlayState extends FlxState
 	final wall_id: Int = 2001;
 	final block_id: Int = 2002;
 	final unbreakable_block_id: Int = 2003;
+
+	var score_text: FlxText;
+	var score: Int;
 
 	var gameover: Bool;
 	var youwin: Bool;
@@ -114,6 +118,12 @@ class PlayState extends FlxState
 
 		gameover = false;
 		youwin = false;
+
+		score = 0;
+		score_text = new FlxText(0, 0, 0, 'score: ${score}', 6);
+		score_text.screenCenter();
+		score_text.y = 0;
+		add(score_text);
 	}
 
 	override public function update(elapsed:Float)
@@ -142,6 +152,8 @@ class PlayState extends FlxState
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false);
 			youwin = true;
 		}
+
+		score_text.text = 'score: ${score}';
 
 		if (ball.y > FlxG.height) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
@@ -178,6 +190,7 @@ class PlayState extends FlxState
 			handleBallCollision(_ball);
 
 			_block.kill();
+			score = score + 1;
 		}
 
 		if (_unbreakble != null && _ball != null) {
