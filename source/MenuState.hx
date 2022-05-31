@@ -24,7 +24,7 @@ class MenuState extends FlxState
 		add(title);
 		
 		playButton = new FlxButton(title.x + int(title.width / 2), title.y + title.height + 10, "Play",
-				function () { FlxG.switchState(new PlayState()); });
+				function () { FlxG.switchState(new PlayState(0)); });
 		playButton.x = playButton.x - int(playButton.width / 2);
 
 		add(playButton);

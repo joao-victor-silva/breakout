@@ -31,6 +31,11 @@ class PlayState extends FlxState
 	var gameover: Bool;
 	var youwin: Bool;
 
+	public function new(score: Int) {
+		super();
+		this.score = score;	
+	}
+
 	override public function create()
 	{
 		super.create();
@@ -119,7 +124,6 @@ class PlayState extends FlxState
 		gameover = false;
 		youwin = false;
 
-		score = 0;
 		score_text = new FlxText(0, 0, 0, 'score: ${score}', 6);
 		score_text.screenCenter();
 		score_text.y = 0;
@@ -149,7 +153,8 @@ class PlayState extends FlxState
 		FlxG.overlap(this, null, ballCollide);
 
 		if (blocks.countLiving() == 0) {
-			FlxG.camera.fade(FlxColor.BLACK, 0.7, false);
+			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
+				function () { FlxG.switchState(new PlayState(score)); });
 			youwin = true;
 		}
 
@@ -157,7 +162,7 @@ class PlayState extends FlxState
 
 		if (ball.y > FlxG.height) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
-				function () { FlxG.switchState(new PlayState()); });
+				function () { FlxG.switchState(new PlayState(0)); });
 			gameover = true;
 		}
 
