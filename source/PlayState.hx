@@ -77,22 +77,40 @@ class PlayState extends FlxState
 		ball.velocity.y = -100;
 
 		add(ball);
-
+		
+		var rows = Assets.getText(AssetPaths.map1__txt).split("\n");
 
 		blocks = new FlxGroup();
-		var block_height: Int = int((FlxG.height - wallUp.height) / 15);
-		var block_width: Int = int((FlxG.width - (2 * wallLeft.width)) / 10);
-		for (i in 0...4) {
-			for (j in 0...10) {
-				var block = new FlxSprite();
-				block.makeGraphic(block_width, block_height, FlxG.random.color(FlxColor.fromRGBFloat(0.1, 0.1, 0.1, 1)));
-				block.x = wallLeft.width + (j * block_width);
-				block.y = wallUp.height + (i * block_height);
-				block.ID = block_id;
-				blocks.add(block);
+		unbreakble_blocks = new FlxGroup();
+		var i: Int = 0;
+		for (row in rows) {
+			var j: Int = 0;
+			for (block_type in row.split("")) {
+				if (block_type != ".") {
+					var block = new FlxSprite();
+					if (block_type == "o") {
+						block.loadGraphic(AssetPaths.block__png, false);
+						block.color = FlxG.random.color(FlxColor.fromRGBFloat(0.1, 0.1, 0.1, 1));
+						block.ID = block_id;
+						block.x = wallLeft.width + (j * block.width);
+						block.y = wallUp.height + (i * block.height);
+						blocks.add(block);
+					} else {
+						block.loadGraphic(AssetPaths.unbreakable__png, false);
+						block.color = FlxColor.GRAY;
+						block.immovable = true;
+						block.ID = unbreakable_block_id;
+						block.x = wallLeft.width + (j * block.width);
+						block.y = wallUp.height + (i * block.height);
+						unbreakble_blocks.add(block);
+					}
+				}
+				j = j + 1;
 			}
+			i = i + 1;
 		}
 		add(blocks);
+		add(unbreakble_blocks);
 
 		gameover = false;
 		youwin = false;
