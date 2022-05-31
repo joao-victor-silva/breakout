@@ -8,18 +8,21 @@ import flixel.util.FlxColor;
 import flixel.util.FlxDirectionFlags;
 import flixel.FlxG;
 import Std.int;
+import openfl.Assets;
 
 class PlayState extends FlxState
 {
 	var player: FlxSprite;
 	var walls: FlxGroup;
 	var blocks: FlxGroup;
+	var unbreakble_blocks: FlxGroup;
 	var ball: FlxSprite;
 	var acceleration: Int;
 	final player_id: Int = 1000;
 	final ball_id: Int = 2000;
 	final wall_id: Int = 2001;
 	final block_id: Int = 2002;
+	final unbreakable_block_id: Int = 2003;
 
 	var gameover: Bool;
 	var youwin: Bool;
@@ -135,6 +138,7 @@ class PlayState extends FlxState
 		var _ball = detect(ball_id, obj, other);
 		var _wall = detect(wall_id, obj, other);
 		var _block = detect(block_id, obj, other);
+		var _unbreakble = detect(unbreakable_block_id, obj, other);
 		
 		if (_player != null && _ball != null) {
 			player.immovable = true;
@@ -156,6 +160,12 @@ class PlayState extends FlxState
 			handleBallCollision(_ball);
 
 			_block.kill();
+		}
+
+		if (_unbreakble != null && _ball != null) {
+			FlxObject.separate(_ball, _unbreakble);
+
+			handleBallCollision(_ball);
 		}
 
 		if (_player != null && _wall != null) {
