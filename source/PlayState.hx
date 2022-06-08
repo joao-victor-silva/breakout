@@ -19,11 +19,6 @@ class PlayState extends FlxState
 	var unbreakble_blocks: FlxGroup;
 	var ball: FlxSprite;
 	var acceleration: Int;
-	final player_id: Int = 1000;
-	final ball_id: Int = 2000;
-	final wall_id: Int = 2001;
-	final block_id: Int = 2002;
-	final unbreakable_block_id: Int = 2003;
 
 	var score_text: FlxText;
 	var score: Int;
@@ -33,7 +28,7 @@ class PlayState extends FlxState
 
 	public function new(score: Int) {
 		super();
-		this.score = score;	
+		this.score = score;
 	}
 
 	override public function create()
@@ -49,7 +44,7 @@ class PlayState extends FlxState
 
 		player.maxVelocity.x = int(FlxG.width / 2.5);
 		player.drag.x = FlxG.width * 5;
-		player.ID = player_id;
+		player.ID = Collision.player_id;
 
 		add(player);
 
@@ -58,20 +53,20 @@ class PlayState extends FlxState
 		var wallUp = new FlxSprite();
 		wallUp.makeGraphic(FlxG.width, 10, FlxColor.GRAY);
 		wallUp.immovable = true;
-		wallUp.ID = wall_id;
+		wallUp.ID = Collision.wall_id;
 		walls.add(wallUp);
 
 		var wallLeft = new FlxSprite();
 		wallLeft.makeGraphic(10, FlxG.height, FlxColor.GRAY);
 		wallLeft.immovable = true;
-		wallLeft.ID = wall_id;
+		wallLeft.ID = Collision.wall_id;
 		walls.add(wallLeft);
 
 		var wallRight = new FlxSprite();
 		wallRight.makeGraphic(10, FlxG.height, FlxColor.GRAY);
 		wallRight.x = FlxG.width - 10;
 		wallRight.immovable = true;
-		wallRight.ID = wall_id;
+		wallRight.ID = Collision.wall_id;
 		walls.add(wallRight);
 
 		add(walls);
@@ -80,7 +75,7 @@ class PlayState extends FlxState
 		ball.makeGraphic(10, 10, FlxColor.RED);
 		ball.y = int((FlxG.height - ball.height) / 2);
 		ball.x = int((FlxG.width - ball.width) / 2);
-		ball.ID = ball_id;
+		ball.ID = Collision.ball_id;
 
 		ball.velocity.x = -100;
 		ball.velocity.y = -100;
@@ -100,7 +95,7 @@ class PlayState extends FlxState
 					if (block_type == "o") {
 						block.loadGraphic(AssetPaths.block__png, false);
 						block.color = FlxG.random.color(FlxColor.fromRGBFloat(0.1, 0.1, 0.1, 1));
-						block.ID = block_id;
+						block.ID = Collision.block_id;
 						block.x = wallLeft.width + (j * block.width);
 						block.y = wallUp.height + (i * block.height);
 						blocks.add(block);
@@ -108,7 +103,7 @@ class PlayState extends FlxState
 						block.loadGraphic(AssetPaths.unbreakable__png, false);
 						block.color = FlxColor.GRAY;
 						block.immovable = true;
-						block.ID = unbreakable_block_id;
+						block.ID = Collision.unbreakable_block_id;
 						block.x = wallLeft.width + (j * block.width);
 						block.y = wallUp.height + (i * block.height);
 						unbreakble_blocks.add(block);
@@ -169,30 +164,30 @@ class PlayState extends FlxState
 	}
 
 	public function ballCollide(obj: FlxObject, other: FlxObject) {
-		var _player = detect(player_id, obj, other);
-		var _ball = detect(ball_id, obj, other);
-		var _wall = detect(wall_id, obj, other);
-		var _block = detect(block_id, obj, other);
-		var _unbreakble = detect(unbreakable_block_id, obj, other);
+		var _player = Collision.detect(Collision.player_id, obj, other);
+		var _ball = Collision.detect(Collision.ball_id, obj, other);
+		var _wall = Collision.detect(Collision.wall_id, obj, other);
+		var _block = Collision.detect(Collision.block_id, obj, other);
+		var _unbreakble = Collision.detect(Collision.unbreakable_block_id, obj, other);
 		
 		if (_player != null && _ball != null) {
 			player.immovable = true;
 			FlxObject.separate(_player, _ball);
 			player.immovable = false;
 
-			handleBallCollision(_ball);
+			Collision.handleBallCollision(_ball);
 		}
 
 		if (_wall != null && _ball != null) {
 			FlxObject.separate(_ball, _wall);
 
-			handleBallCollision(_ball);
+			Collision.handleBallCollision(_ball);
 		}
 
 		if (_block != null && _ball != null) {
 			FlxObject.separate(_ball, _block);
 
-			handleBallCollision(_ball);
+			Collision.handleBallCollision(_ball);
 
 			_block.kill();
 			score = score + 1;
@@ -201,7 +196,7 @@ class PlayState extends FlxState
 		if (_unbreakble != null && _ball != null) {
 			FlxObject.separate(_ball, _unbreakble);
 
-			handleBallCollision(_ball);
+			Collision.handleBallCollision(_ball);
 		}
 
 		if (_player != null && _wall != null) {
@@ -209,35 +204,4 @@ class PlayState extends FlxState
 		}
 	}
 
-	public function detect(id: Int, obj1: FlxObject, obj2: FlxObject) : FlxObject {
-		if (obj1.ID == id) {
-			return obj1;
-		}
-
-		if (obj2.ID == id) {
-			return obj2;
-		}
-
-		return null;
-	}
-
-	public function handleBallCollision(_ball: FlxObject) {
-		var left = _ball.isTouching(FlxDirectionFlags.LEFT);
-		var right = _ball.isTouching(FlxDirectionFlags.RIGHT);
-		var up = _ball.isTouching(FlxDirectionFlags.UP);
-		var down = _ball.isTouching(FlxDirectionFlags.DOWN);
-
-		if (left) {
-			_ball.velocity.x = 100;
-		}
-		if (right) {
-			_ball.velocity.x = -100;
-		}
-		if (up) {
-			_ball.velocity.y = 100;
-		}
-		if (down) {
-			_ball.velocity.y = -100;
-		}
-	}
 }
