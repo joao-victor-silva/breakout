@@ -13,12 +13,10 @@ import flixel.text.FlxText;
 
 class PlayState extends FlxState
 {
-	var player: FlxSprite;
 	var walls: FlxGroup;
 	var blocks: FlxGroup;
 	var unbreakble_blocks: FlxGroup;
 	var ball: FlxSprite;
-	var acceleration: Int;
 
 	var score_text: FlxText;
 	var score: Int;
@@ -35,17 +33,7 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-		acceleration = int(FlxG.width * 2);
-
-		player = new FlxSprite();
-		player.makeGraphic(50, 10, FlxColor.WHITE);
-		player.y = 8 * (FlxG.height / 10);
-		player.x = int((FlxG.width - player.width) / 2);
-
-		player.maxVelocity.x = int(FlxG.width / 2.5);
-		player.drag.x = FlxG.width * 5;
-		player.ID = Collision.player_id;
-
+		var player = new Player();
 		add(player);
 
 		walls = new FlxGroup();
@@ -137,13 +125,7 @@ class PlayState extends FlxState
 
 		super.update(elapsed);
 
-		if (FlxG.keys.pressed.LEFT) {
-			player.acceleration.x = -acceleration;
-		} else if (FlxG.keys.pressed.RIGHT) {
-			player.acceleration.x = acceleration;
-		} else {
-			player.acceleration.x = 0;
-		}
+
 
 		FlxG.overlap(this, null, ballCollide);
 
@@ -171,9 +153,9 @@ class PlayState extends FlxState
 		var _unbreakble = Collision.detect(Collision.unbreakable_block_id, obj, other);
 		
 		if (_player != null && _ball != null) {
-			player.immovable = true;
+			_player.immovable = true;
 			FlxObject.separate(_player, _ball);
-			player.immovable = false;
+			_player.immovable = false;
 
 			Collision.handleBallCollision(_ball);
 		}
