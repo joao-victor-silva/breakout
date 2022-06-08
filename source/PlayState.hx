@@ -14,9 +14,9 @@ import flixel.text.FlxText;
 class PlayState extends FlxState
 {
 	var walls: FlxGroup;
+	var balls: FlxGroup;
 	var blocks: FlxGroup;
 	var unbreakble_blocks: FlxGroup;
-	var ball: FlxSprite;
 
 	var score_text: FlxText;
 	var score: Int;
@@ -59,16 +59,10 @@ class PlayState extends FlxState
 
 		add(walls);
 
-		ball = new FlxSprite();
-		ball.makeGraphic(10, 10, FlxColor.RED);
-		ball.y = int((FlxG.height - ball.height) / 2);
-		ball.x = int((FlxG.width - ball.width) / 2);
-		ball.ID = Collision.ball_id;
-
-		ball.velocity.x = -100;
-		ball.velocity.y = -100;
-
-		add(ball);
+		balls = new FlxGroup();
+		var ball = new Ball();
+		balls.add(ball);
+		add(balls);
 		
 		var rows = Assets.getText(AssetPaths.map1__txt).split("\n");
 
@@ -125,9 +119,7 @@ class PlayState extends FlxState
 
 		super.update(elapsed);
 
-
-
-		FlxG.overlap(this, null, ballCollide);
+		FlxG.overlap(this, null, collide);
 
 		if (blocks.countLiving() == 0) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
@@ -137,7 +129,8 @@ class PlayState extends FlxState
 
 		score_text.text = 'score: ${score}';
 
-		if (ball.y > FlxG.height) {
+
+		if (balls.countLiving() == 0) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
 				function () { FlxG.switchState(new PlayState(0)); });
 			gameover = true;
@@ -145,7 +138,7 @@ class PlayState extends FlxState
 
 	}
 
-	public function ballCollide(obj: FlxObject, other: FlxObject) {
+	public function collide(obj: FlxObject, other: FlxObject) {
 		var _player = Collision.detect(Collision.player_id, obj, other);
 		var _ball = Collision.detect(Collision.ball_id, obj, other);
 		var _wall = Collision.detect(Collision.wall_id, obj, other);
@@ -157,19 +150,22 @@ class PlayState extends FlxState
 			FlxObject.separate(_player, _ball);
 			_player.immovable = false;
 
-			Collision.handleBallCollision(_ball);
+			var ball: Ball = cast _ball;
+			ball.collide();
 		}
 
 		if (_wall != null && _ball != null) {
 			FlxObject.separate(_ball, _wall);
 
-			Collision.handleBallCollision(_ball);
+			var ball: Ball = cast _ball;
+			ball.collide();
 		}
 
 		if (_block != null && _ball != null) {
 			FlxObject.separate(_ball, _block);
 
-			Collision.handleBallCollision(_ball);
+			var ball: Ball = cast _ball;
+			ball.collide();
 
 			_block.kill();
 			score = score + 1;
@@ -178,7 +174,8 @@ class PlayState extends FlxState
 		if (_unbreakble != null && _ball != null) {
 			FlxObject.separate(_ball, _unbreakble);
 
-			Collision.handleBallCollision(_ball);
+			var ball: Ball = cast _ball;
+			ball.collide();
 		}
 
 		if (_player != null && _wall != null) {
