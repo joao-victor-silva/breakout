@@ -24,6 +24,10 @@ class PlayState extends FlxState
 	var gameover: Bool;
 	var youwin: Bool;
 
+	final BLOCK_INI_X = 10;
+	final BLOCK_INI_Y = 10;
+
+
 	public function new(score: Int) {
 		super();
 		this.score = score;
@@ -37,25 +41,10 @@ class PlayState extends FlxState
 		add(player);
 
 		walls = new FlxGroup();
-		
-		var wallUp = new FlxSprite();
-		wallUp.makeGraphic(FlxG.width, 10, FlxColor.GRAY);
-		wallUp.immovable = true;
-		wallUp.ID = Collision.wall_id;
-		walls.add(wallUp);
 
-		var wallLeft = new FlxSprite();
-		wallLeft.makeGraphic(10, FlxG.height, FlxColor.GRAY);
-		wallLeft.immovable = true;
-		wallLeft.ID = Collision.wall_id;
-		walls.add(wallLeft);
-
-		var wallRight = new FlxSprite();
-		wallRight.makeGraphic(10, FlxG.height, FlxColor.GRAY);
-		wallRight.x = FlxG.width - 10;
-		wallRight.immovable = true;
-		wallRight.ID = Collision.wall_id;
-		walls.add(wallRight);
+		addWall(0, 0, 10, FlxG.width); // UP
+		addWall(0, 0, FlxG.height, 10); // LEFT
+		addWall(FlxG.width - 10, 0, FlxG.height, 10); // RIGHT
 
 		add(walls);
 
@@ -78,16 +67,16 @@ class PlayState extends FlxState
 						block.loadGraphic(AssetPaths.block__png, false);
 						block.color = FlxG.random.color(FlxColor.fromRGBFloat(0.1, 0.1, 0.1, 1));
 						block.ID = Collision.block_id;
-						block.x = wallLeft.width + (j * block.width);
-						block.y = wallUp.height + (i * block.height);
+						block.x = BLOCK_INI_X + (j * block.width);
+						block.y = BLOCK_INI_Y + (i * block.height);
 						blocks.add(block);
 					} else {
 						block.loadGraphic(AssetPaths.unbreakable__png, false);
 						block.color = FlxColor.GRAY;
 						block.immovable = true;
 						block.ID = Collision.unbreakable_block_id;
-						block.x = wallLeft.width + (j * block.width);
-						block.y = wallUp.height + (i * block.height);
+						block.x = BLOCK_INI_X + (j * block.width);
+						block.y = BLOCK_INI_Y + (i * block.height);
 						unbreakble_blocks.add(block);
 					}
 				}
@@ -181,6 +170,15 @@ class PlayState extends FlxState
 		if (_player != null && _wall != null) {
 			FlxObject.separateX(_player, _wall);
 		}
+	}
+	
+
+	public function addWall(x: Int, y: Int, height: Int, width: Int) {
+		var wall = new FlxSprite(x, y);
+		wall.makeGraphic(width, height, FlxColor.GRAY);
+		wall.immovable = true;
+		wall.ID = Collision.wall_id;
+		walls.add(wall);
 	}
 
 }
