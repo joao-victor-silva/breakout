@@ -11,6 +11,11 @@ import Std.int;
 import openfl.Assets;
 import flixel.text.FlxText;
 
+typedef BlockGroup = {
+	var block: Class<Block>;
+	var group: FlxGroup;
+};
+
 class PlayState extends FlxState
 {
 	var walls: FlxGroup;
@@ -24,9 +29,7 @@ class PlayState extends FlxState
 	var gameover: Bool;
 	var youwin: Bool;
 
-	final BLOCK_INI_X = 10;
-	final BLOCK_INI_Y = 10;
-
+	var _block_type: Map<String, BlockGroup>;
 
 	public function new(score: Int) {
 		super();
@@ -36,6 +39,7 @@ class PlayState extends FlxState
 	override public function create()
 	{
 		super.create();
+
 
 		var player = new Player();
 		add(player);
@@ -57,28 +61,27 @@ class PlayState extends FlxState
 
 		blocks = new FlxGroup();
 		unbreakble_blocks = new FlxGroup();
+
+		_block_type = [
+			"o" => {
+				block: Breakable,
+				group: blocks,
+			},
+			"x" => {
+				block: Unbreakable,
+				group: unbreakble_blocks,
+			},
+		];
+
 		var i: Int = 0;
 		for (row in rows) {
 			var j: Int = 0;
-			for (block_type in row.split("")) {
-				if (block_type != ".") {
-					var block = new FlxSprite();
-					if (block_type == "o") {
-						block.loadGraphic(AssetPaths.block__png, false);
-						block.color = FlxG.random.color(FlxColor.fromRGBFloat(0.1, 0.1, 0.1, 1));
-						block.ID = Collision.block_id;
-						block.x = BLOCK_INI_X + (j * block.width);
-						block.y = BLOCK_INI_Y + (i * block.height);
-						blocks.add(block);
-					} else {
-						block.loadGraphic(AssetPaths.unbreakable__png, false);
-						block.color = FlxColor.GRAY;
-						block.immovable = true;
-						block.ID = Collision.unbreakable_block_id;
-						block.x = BLOCK_INI_X + (j * block.width);
-						block.y = BLOCK_INI_Y + (i * block.height);
-						unbreakble_blocks.add(block);
-					}
+			for (type in row.split("")) {
+				if (type != ".") {
+					var block_type = _block_type[type].block;
+					var block = Type.createInstance(block_type, [i, j]);
+					var group = _block_type[type].group;
+					group.add(block);
 				}
 				j = j + 1;
 			}
