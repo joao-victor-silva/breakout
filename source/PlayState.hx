@@ -46,9 +46,9 @@ class PlayState extends FlxState
 
 		walls = new FlxGroup();
 
-		addWall(0, 0, 10, FlxG.width); // UP
-		addWall(0, 0, FlxG.height, 10); // LEFT
-		addWall(FlxG.width - 10, 0, FlxG.height, 10); // RIGHT
+		walls.add(new Wall(0, 0, 10, FlxG.width));// UP
+		walls.add(new Wall(0, 0, FlxG.height, 10)); // LEFT
+		walls.add(new Wall(FlxG.width - 10, 0, FlxG.height, 10)); // RIGHT
 
 		add(walls);
 
@@ -174,14 +174,4 @@ class PlayState extends FlxState
 			FlxObject.separateX(_player, _wall);
 		}
 	}
-	
-
-	public function addWall(x: Int, y: Int, height: Int, width: Int) {
-		var wall = new FlxSprite(x, y);
-		wall.makeGraphic(width, height, FlxColor.GRAY);
-		wall.immovable = true;
-		wall.ID = Collision.wall_id;
-		walls.add(wall);
-	}
-
 }
