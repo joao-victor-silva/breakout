@@ -10,6 +10,7 @@ import flixel.FlxG;
 import Std.int;
 import openfl.Assets;
 import flixel.text.FlxText;
+import flixel.system.FlxSound;
 
 typedef BlockGroup = {
 	var block: Class<Block>;
@@ -30,6 +31,8 @@ class PlayState extends FlxState
 	var youwin: Bool;
 
 	var _block_type: Map<String, BlockGroup>;
+
+	var sound: FlxSound;
 
 	public function new(score: Int) {
 		super();
@@ -58,6 +61,7 @@ class PlayState extends FlxState
 		add(balls);
 		
 		var rows = Assets.getText(AssetPaths.map1__txt).split("\n");
+		sound = FlxG.sound.load(AssetPaths.impactGeneric_light_000__ogg);
 
 		blocks = new FlxGroup();
 		unbreakble_blocks = new FlxGroup();
@@ -97,6 +101,11 @@ class PlayState extends FlxState
 		score_text.screenCenter();
 		score_text.y = 0;
 		add(score_text);
+
+		if (FlxG.sound.music == null) {
+			var volume = 0.6;
+			FlxG.sound.playMusic(AssetPaths.Tutorials_TurnBasedRPG_assets_music_HaxeFlixel_Tutorial_Game__ogg, volume, true);
+		}
 	}
 
 	override public function update(elapsed:Float)
@@ -144,6 +153,8 @@ class PlayState extends FlxState
 
 			var ball: Ball = cast _ball;
 			ball.collide();
+
+			sound.play();
 		}
 
 		if (_wall != null && _ball != null) {
