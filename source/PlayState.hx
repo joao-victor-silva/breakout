@@ -155,6 +155,8 @@ class PlayState extends FlxState
 			ball.collide();
 
 			sound.play();
+
+			FlxG.camera.shake(0.008, 0.05);
 		}
 
 		if (_wall != null && _ball != null) {
@@ -162,6 +164,8 @@ class PlayState extends FlxState
 
 			var ball: Ball = cast _ball;
 			ball.collide();
+
+			FlxG.camera.shake(0.008, 0.05);
 		}
 
 		if (_block != null && _ball != null) {
@@ -172,6 +176,8 @@ class PlayState extends FlxState
 
 			_block.kill();
 			score = score + 1;
+
+			FlxG.camera.shake(0.008, 0.05);
 		}
 
 		if (_unbreakable != null && _ball != null) {
@@ -179,6 +185,8 @@ class PlayState extends FlxState
 
 			var ball: Ball = cast _ball;
 			ball.collide();
+
+			FlxG.camera.shake(0.008, 0.05);
 		}
 
 		if (_player != null && _wall != null) {
