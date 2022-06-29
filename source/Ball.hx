@@ -10,10 +10,12 @@ import flixel.FlxG;
 import Std.int;
 import openfl.Assets;
 import flixel.text.FlxText;
+import flixel.effects.particles.FlxEmitter;
 
 class Ball extends FlxSprite
 {
 	var ACCELERATION: Int;
+	var particle_emitter: FlxEmitter;
 
 	public function new() {
 		super();
@@ -25,6 +27,16 @@ class Ball extends FlxSprite
 
 		this.velocity.x = -100;
 		this.velocity.y = -100;
+
+		this.particle_emitter = new FlxEmitter();
+		this.particle_emitter.makeParticles(2, 2, FlxColor.GRAY, 120);
+		this.particle_emitter.lifespan.set(0.5);
+		this.particle_emitter.alpha.set(1, 1, 0, 0);
+	}
+
+	override public function draw() {
+		super.draw();
+		this.particle_emitter.draw();
 	}
 	
 	public function collide() {
@@ -35,20 +47,31 @@ class Ball extends FlxSprite
 
 		if (left) {
 			this.velocity.x = 100;
+			this.particle_emitter.setPosition(this.x, int(this.y + (this.height / 2)));
+			this.particle_emitter.launchAngle.set(-45, 45);
 		}
 		if (right) {
 			this.velocity.x = -100;
+			this.particle_emitter.setPosition(this.x + this.width, int(this.y + (this.height / 2)));
+			this.particle_emitter.launchAngle.set(135, 225);
 		}
 		if (up) {
 			this.velocity.y = 100;
+			this.particle_emitter.setPosition(this.x, int(this.y + (this.height / 2)));
+			this.particle_emitter.launchAngle.set(45, 135);
 		}
 		if (down) {
 			this.velocity.y = -100;
+			this.particle_emitter.setPosition(this.x, int(this.y + (this.height / 2)));
+			this.particle_emitter.launchAngle.set(225, -45);
 		}
+		this.particle_emitter.start(true, 0, 30);
+
 	}
 	
 	override public function update(elapsed:Float) {
 		super.update(elapsed);
+		this.particle_emitter.update(elapsed);
 
 		if (this.y > FlxG.height) {
 			this.kill();
