@@ -1,0 +1,4 @@
+enum PowerUpType{
+	SmallAndFast;
+	Magnetic;
+}

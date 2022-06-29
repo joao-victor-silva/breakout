@@ -41,4 +41,7 @@ class Player extends FlxSprite
 		}
 	}
 
+	public function setPowerUp(type: PowerUpType) {
+	}
+
 }
