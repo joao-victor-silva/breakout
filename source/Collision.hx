@@ -17,6 +17,7 @@ class Collision {
 	public static final wall_id: Int = 2001;
 	public static final block_id: Int = 2002;
 	public static final unbreakable_block_id: Int = 2003;
+	public static final power_up_block_id : Int = 2004;
 
 	static public function detect(id: Int, obj1: FlxObject, obj2: FlxObject) : FlxObject {
 		if (obj1.ID == id) {

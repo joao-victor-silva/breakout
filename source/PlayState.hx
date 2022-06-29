@@ -23,6 +23,7 @@ class PlayState extends FlxState
 	var balls: FlxGroup;
 	var blocks: FlxGroup;
 	var unbreakable_blocks: FlxGroup;
+	var player = new Player();
 
 	var score_text: FlxText;
 	var score: Int;
@@ -44,7 +45,6 @@ class PlayState extends FlxState
 		super.create();
 
 
-		var player = new Player();
 		add(player);
 
 		walls = new FlxGroup();
@@ -73,6 +73,10 @@ class PlayState extends FlxState
 			},
 			"x" => {
 				block: Unbreakable,
+				group: unbreakable_blocks,
+			},
+			"p" => {
+				block: PowerUpBlock,
 				group: unbreakable_blocks,
 			},
 		];
@@ -145,6 +149,7 @@ class PlayState extends FlxState
 		var _wall = Collision.detect(Collision.wall_id, obj, other);
 		var _block = Collision.detect(Collision.block_id, obj, other);
 		var _unbreakable = Collision.detect(Collision.unbreakable_block_id, obj, other);
+		var _power_up = Collision.detect(Collision.power_up_block_id, obj, other);
 		
 		if (_player != null && _ball != null) {
 			_player.immovable = true;
@@ -185,6 +190,24 @@ class PlayState extends FlxState
 
 			var ball: Ball = cast _ball;
 			ball.collide();
+
+			FlxG.camera.shake(0.008, 0.05);
+		}
+
+		if (_power_up != null && _ball != null) {
+			FlxObject.separate(_ball, _power_up);
+
+			var ball: Ball = cast _ball;
+			ball.collide();
+
+			var block: PowerUpBlock = cast _power_up;
+			block.kill();
+
+			if (block.effect == "Small and fast") {
+				player.scale.set(0.5, 1);
+				player.updateHitbox();
+				player.maxVelocity.x = FlxG.width;
+			}
 
 			FlxG.camera.shake(0.008, 0.05);
 		}
