@@ -22,13 +22,13 @@ class PlayState extends FlxState
 	var walls: FlxGroup;
 	var balls: FlxGroup;
 	var blocks: FlxGroup;
-	var unbreakble_blocks: FlxGroup;
+	var unbreakable_blocks: FlxGroup;
 
 	var score_text: FlxText;
 	var score: Int;
 
-	var gameover: Bool;
-	var youwin: Bool;
+	var game_over: Bool;
+	var you_win: Bool;
 
 	var _block_type: Map<String, BlockGroup>;
 
@@ -64,7 +64,7 @@ class PlayState extends FlxState
 		sound = FlxG.sound.load(AssetPaths.impactGeneric_light_000__ogg);
 
 		blocks = new FlxGroup();
-		unbreakble_blocks = new FlxGroup();
+		unbreakable_blocks = new FlxGroup();
 
 		_block_type = [
 			"o" => {
@@ -73,7 +73,7 @@ class PlayState extends FlxState
 			},
 			"x" => {
 				block: Unbreakable,
-				group: unbreakble_blocks,
+				group: unbreakable_blocks,
 			},
 		];
 
@@ -92,10 +92,10 @@ class PlayState extends FlxState
 			i = i + 1;
 		}
 		add(blocks);
-		add(unbreakble_blocks);
+		add(unbreakable_blocks);
 
-		gameover = false;
-		youwin = false;
+		game_over = false;
+		you_win = false;
 
 		score_text = new FlxText(0, 0, 0, 'score: ${score}', 6);
 		score_text.screenCenter();
@@ -110,11 +110,11 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float)
 	{
-		if (youwin) {
+		if (you_win) {
 			return;
 		}
 
-		if (gameover) {
+		if (game_over) {
 			return;
 		}
 
@@ -125,7 +125,7 @@ class PlayState extends FlxState
 		if (blocks.countLiving() == 0) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
 				function () { FlxG.switchState(new PlayState(score)); });
-			youwin = true;
+			you_win = true;
 		}
 
 		score_text.text = 'score: ${score}';
@@ -134,7 +134,7 @@ class PlayState extends FlxState
 		if (balls.countLiving() == 0) {
 			FlxG.camera.fade(FlxColor.BLACK, 0.7, false,
 				function () { FlxG.switchState(new PlayState(0)); });
-			gameover = true;
+			game_over = true;
 		}
 
 	}
@@ -144,7 +144,7 @@ class PlayState extends FlxState
 		var _ball = Collision.detect(Collision.ball_id, obj, other);
 		var _wall = Collision.detect(Collision.wall_id, obj, other);
 		var _block = Collision.detect(Collision.block_id, obj, other);
-		var _unbreakble = Collision.detect(Collision.unbreakable_block_id, obj, other);
+		var _unbreakable = Collision.detect(Collision.unbreakable_block_id, obj, other);
 		
 		if (_player != null && _ball != null) {
 			_player.immovable = true;
@@ -174,8 +174,8 @@ class PlayState extends FlxState
 			score = score + 1;
 		}
 
-		if (_unbreakble != null && _ball != null) {
-			FlxObject.separate(_ball, _unbreakble);
+		if (_unbreakable != null && _ball != null) {
+			FlxObject.separate(_ball, _unbreakable);
 
 			var ball: Ball = cast _ball;
 			ball.collide();
