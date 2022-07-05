@@ -39,11 +39,12 @@ class Ball extends FlxSprite
 		this.particle_emitter.draw();
 	}
 	
-	public function collide() {
+	public function collide(?player: Player) {
 		var left = this.isTouching(FlxDirectionFlags.LEFT);
 		var right = this.isTouching(FlxDirectionFlags.RIGHT);
 		var up = this.isTouching(FlxDirectionFlags.UP);
 		var down = this.isTouching(FlxDirectionFlags.DOWN);
+
 
 		if (left) {
 			this.velocity.x = 100;
@@ -61,6 +62,17 @@ class Ball extends FlxSprite
 			this.particle_emitter.launchAngle.set(45, 135);
 		}
 		if (down) {
+			if (player != null) {
+				var player_section = int(player.width / 4);
+				var ball_middle = this.x + int(this.width / 2);
+				// Always left
+				if (ball_middle < (player_section + player.x)) {
+					this.velocity.x = -100;
+				// Always right
+				} else if (ball_middle > (player.x + (3 * player_section))) {
+					this.velocity.x = 100;
+				}
+			}
 			this.velocity.y = -100;
 			this.particle_emitter.setPosition(this.x, int(this.y + (this.height / 2)));
 			this.particle_emitter.launchAngle.set(225, -45);

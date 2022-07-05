@@ -157,7 +157,8 @@ class PlayState extends FlxState
 			_player.immovable = false;
 
 			var ball: Ball = cast _ball;
-			ball.collide();
+			var player: Player = cast _player;
+			ball.collide(player);
 
 			sound.play();
 
