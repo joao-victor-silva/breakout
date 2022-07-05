@@ -13,13 +13,13 @@ import flixel.text.FlxText;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 
 class PowerUpBlock extends Block {
-	public var effect: String;
+	public var type: PowerUpType;
 
-	public function new(row: Int, column: Int) {
+	public function new(row: Int, column: Int, type: PowerUpType) {
 		var color = FlxColor.YELLOW;
 
 		// TODO novo asset para o bloco
 		super(Collision.power_up_block_id, row, column, AssetPaths.unbreakable__png, color);
-		this.effect = "Small and fast";
+		this.type = type;
 	}
 }

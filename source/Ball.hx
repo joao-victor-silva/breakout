@@ -72,6 +72,8 @@ class Ball extends FlxSprite
 				} else if (ball_middle > (player.x + (3 * player_section))) {
 					this.velocity.x = 100;
 				}
+				var power_up_manager = FlxG.plugins.get(PowerUpManager);
+				power_up_manager.power_up_trigger = true;
 			}
 			this.velocity.y = -100;
 			this.particle_emitter.setPosition(this.x, int(this.y + (this.height / 2)));
@@ -82,6 +84,9 @@ class Ball extends FlxSprite
 	}
 	
 	override public function update(elapsed:Float) {
+		var power_up_manager = FlxG.plugins.get(PowerUpManager);
+		power_up_manager.setPowerUpBall(this);
+
 		super.update(elapsed);
 		this.particle_emitter.update(elapsed);
 

@@ -23,7 +23,7 @@ class PlayState extends FlxState
 	var balls: FlxGroup;
 	var blocks: FlxGroup;
 	var unbreakable_blocks: FlxGroup;
-	var player = new Player();
+	var player: Player;
 
 	var score_text: FlxText;
 	var score: Int;
@@ -44,7 +44,7 @@ class PlayState extends FlxState
 	{
 		super.create();
 
-
+		player = new Player();
 		add(player);
 
 		walls = new FlxGroup();
@@ -59,6 +59,10 @@ class PlayState extends FlxState
 		var ball = new Ball();
 		balls.add(ball);
 		add(balls);
+
+		FlxG.plugins.add(new PowerUpManager());
+		var power_up_manager = FlxG.plugins.get(PowerUpManager);
+		power_up_manager.enable = false;
 		
 		var rows = Assets.getText(AssetPaths.map1__txt).split("\n");
 		sound = FlxG.sound.load(AssetPaths.impactGeneric_light_000__ogg);
@@ -86,8 +90,12 @@ class PlayState extends FlxState
 			var j: Int = 0;
 			for (type in row.split("")) {
 				if (type != ".") {
+					var parameters: Array<Dynamic> = [i, j];
+					if (type == "p") {
+						parameters.push(PowerUpType.SmallAndFast);
+					}
 					var block_type = _block_type[type].block;
-					var block = Type.createInstance(block_type, [i, j]);
+					var block = Type.createInstance(block_type, parameters);
 					var group = _block_type[type].group;
 					group.add(block);
 				}
@@ -198,17 +206,17 @@ class PlayState extends FlxState
 		if (_power_up != null && _ball != null) {
 			FlxObject.separate(_ball, _power_up);
 
+			var power_up_manager = FlxG.plugins.get(PowerUpManager);
+
 			var ball: Ball = cast _ball;
 			ball.collide();
 
 			var block: PowerUpBlock = cast _power_up;
+			power_up_manager.power_up = block.type;
+			power_up_manager.enable = true;
+			power_up_manager.power_up_trigger = false;
 			block.kill();
 
-			if (block.effect == "Small and fast") {
-				player.scale.set(0.5, 1);
-				player.updateHitbox();
-				player.maxVelocity.x = FlxG.width;
-			}
 
 			FlxG.camera.shake(0.008, 0.05);
 		}

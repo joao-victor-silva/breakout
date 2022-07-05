@@ -39,9 +39,8 @@ class Player extends FlxSprite
 		} else {
 			this.acceleration.x = 0;
 		}
-	}
 
-	public function setPowerUp(type: PowerUpType) {
+		var power_up_manager = FlxG.plugins.get(PowerUpManager);
+		power_up_manager.setPowerUpPlayer(this);
 	}
-
 }
